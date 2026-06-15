@@ -1,3 +1,4 @@
+from sqlalchemy import text
 from app.db.sql_loader import load_sql
 from app.core.database import engine
 

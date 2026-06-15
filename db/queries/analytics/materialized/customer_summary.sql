@@ -19,5 +19,6 @@ GROUP BY
     c.customer_sk,
     c.customer_name,
     c.segment;
-CREATE UNIQUE INDEX idx_mv_customer_summary
-ON mv_customer_summary(customer_sk);
+
+    
+CREATE UNIQUE INDEX idx_mv_customer_summary ON mv_customer_summary(customer_sk);

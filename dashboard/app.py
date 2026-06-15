@@ -1,4 +1,3 @@
-# dashboard/app.py
 import streamlit as st
 import requests
 import pandas as pd
@@ -14,11 +13,11 @@ st.set_page_config(
     layout="wide"
 )
 
-st.title("📊 Business Analytics Platform")
-st.caption(f"Data Warehouse | Star Schema | Advanced SQL | Last updated: {datetime.now():%Y-%m-%d %H:%M}")
+st.title("Business Analytics Platform")
+st.caption(f"Data Warehouse Last updated: {datetime.now():%Y-%m-%d %H:%M}")
 
 # --- KPI CARDS ---
-st.header("Key Performance Indicators")
+st.header("KPI")
 
 try:
     kpi = requests.get(f"{API_BASE}/kpis/revenue").json()

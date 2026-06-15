@@ -42,11 +42,4 @@ ORDER BY
 -- Required for:
 -- REFRESH MATERIALIZED VIEW CONCURRENTLY
 
-CREATE UNIQUE INDEX idx_mv_monthly_revenue
-
-ON mv_monthly_revenue (
-
-    year,
-    month
-
-);
+CREATE UNIQUE INDEX idx_mv_monthly_revenue ON mv_monthly_revenue (year,month);

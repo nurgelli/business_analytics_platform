@@ -1,5 +1,4 @@
 from fastapi import APIRouter
-from sqlalchemy import text
 from app.db.query_executer import execute_query
 
 
@@ -21,4 +20,4 @@ def get_customer_lifetime_val():
 @router.get("/{customer_id}/orders")
 def get_customer_orders(customer_id: str,):
 
-    return execute_query("customers/customer_orders.sql", customer_id=customer_id)
+    return execute_query("customers/customer_orders.sql", customer_id)

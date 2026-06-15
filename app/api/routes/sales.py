@@ -1,5 +1,4 @@
 from fastapi import APIRouter
-from sqlalchemy import text
 from app.db.query_executer import execute_query
 
 
@@ -17,7 +16,7 @@ def get_daily_sales():
     return execute_query("sales/daily_sales.sql")
   
 
-@router.get("revenue_by_region")
+@router.get("/revenue_by_region")
 def get_revenue_by_region():
 
     return execute_query("sales/revenue_by_region.sql")

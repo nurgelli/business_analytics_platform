@@ -22,7 +22,7 @@ def get_revenue_kpis(year: int | None = None) -> dict:
 
 def get_yoy_growth() -> list:
 
-    row = fetch_all("analytics/kpi/yoy_growth.sql")
+    rows = fetch_all("analytics/kpi/yoy_growth.sql")
 
     return [{"year":row["year"],
             "revenue": round(float(row["revenue"] or 0),2,),
@@ -33,7 +33,7 @@ def get_yoy_growth() -> list:
    
 def get_customer_retention(base_year: int, next_year: int) -> dict:
 
-    row = fetch_all("analytics/kpi/yoy_growth.sql")
+    rows = fetch_all("analytics/kpi/customer_retention.sql")
 
     return [{"year":row["year"],
             "revenue": round(float(row["revenue"] or 0), 2,),
