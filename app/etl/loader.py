@@ -78,6 +78,15 @@ class PostgresLoader:
 
         logger.info(f"[FACT] Loaded {len(df)} rows into {table}")
 
+    def truncate_table(self, table: str) -> None:
+        """
+        Clear a target table before a full-refresh load.
+        """
+        with self.engine.begin() as conn:
+            conn.execute(text(f"TRUNCATE TABLE {table} RESTART IDENTITY"))
+
+        logger.info(f"[{table}] Truncated before full refresh")
+
     # -----------------------------
     # MATERIALIZED VIEW REFRESH
     # -----------------------------
@@ -90,13 +99,13 @@ class PostgresLoader:
             logger.warning("No materialized views provided.")
             return
 
-        with self.engine.begin() as conn:
+        with self.engine.connect().execution_options(isolation_level="AUTOCOMMIT") as conn:
             for view in views:
                 conn.execute(
                     text(f"REFRESH MATERIALIZED VIEW CONCURRENTLY {view}")
                 )
 
-        logger.info(f"[MV] Refreshed {len(views)} materialized views")
+        logger.info(f"Refreshed {len(views)} materialized views")
 
     # -----------------------------
     # OPTIONAL: SAFE BULK LOAD

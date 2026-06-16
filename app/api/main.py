@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.routes import kpis, sales, customers, products, analytics
 from app.core.database import test_connection
 from app.core.logger import get_logger
+from app.core.config import settings
 
 logger = get_logger(__name__)
 
@@ -15,8 +16,9 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
+    allow_origins=settings.allowed_origins,  # config'den gelir — .env ile override et
+    allow_credentials=True,
+    allow_methods=["GET", "POST"],
     allow_headers=["*"]
 )
 

@@ -5,6 +5,11 @@ from app.db.query_executer import execute_query
 
 router = APIRouter()
 
+@router.get("/")
+def get_customers():
+
+    return execute_query("customers/top_customers.sql")
+
 @router.get("/top_customer")
 def get_top_customers():
 
@@ -20,4 +25,4 @@ def get_customer_lifetime_val():
 @router.get("/{customer_id}/orders")
 def get_customer_orders(customer_id: str,):
 
-    return execute_query("customers/customer_orders.sql", customer_id)
+    return execute_query("customers/customer_orders.sql", {"customer_id": customer_id})

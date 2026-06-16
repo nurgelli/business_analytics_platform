@@ -5,7 +5,7 @@ SELECT
     d.full_date AS order_date,
     p.product_name,
     p.category,
-    p.subcategory,
+    p.sub_category,
     f.quantity,
     f.sales_amount,
     f.discount,

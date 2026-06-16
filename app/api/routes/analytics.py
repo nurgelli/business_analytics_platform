@@ -35,15 +35,15 @@ def get_benefit_products():
     return execute_query("analytics/rollup_cube/most_benefit_products.sql")
 
 
-@router.get("/materialized/monthly-revenue")
+@router.get("/materialized/monthly_revenue")
 def monthly_revenue_mv():
 
     return execute_query(
         "analytics/materialized/monthly_revenue.sql"
     )
 
-@router.get("/materialized/customer-summary")
-def monthly_revenue_mv():
+@router.get("/materialized/customer_summary")
+def customer_summary_mv():
 
     return execute_query(
         "analytics/materialized/customer_summary.sql"

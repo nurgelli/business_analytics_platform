@@ -153,3 +153,17 @@ class Transformer:
     def run(self) -> pd.DataFrame:
         """If you want simple execution chain"""
         return self.clean().df
+
+
+def transform(df: pd.DataFrame) -> dict[str, pd.DataFrame]:
+    """
+    Build all warehouse-ready dataframes from a raw Superstore dataframe.
+    """
+    transformer = Transformer(df).clean()
+
+    return {
+        "customers": transformer.build_dim_customer(),
+        "products": transformer.build_dim_product(),
+        "dates": transformer.build_dim_date(),
+        "sales": transformer.df,
+    }

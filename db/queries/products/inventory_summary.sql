@@ -10,7 +10,7 @@ SELECT
 
     p.category,
 
-    p.subcategory,
+    p.sub_category,
 
     SUM(f.quantity) AS total_units_sold,
 
@@ -38,7 +38,7 @@ GROUP BY
     p.product_id,
     p.product_name,
     p.category,
-    p.subcategory
+    p.sub_category
 
 ORDER BY
 

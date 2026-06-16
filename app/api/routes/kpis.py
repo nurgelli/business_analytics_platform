@@ -15,7 +15,7 @@ def growth_kpis():
 
 @router.get("/retention")
 def retention_kpis(
-    base_year: int = Query(2021, description="Base year"),
-    next_year: int = Query(2022, description="Comparison year")
+    base_year: int = Query(..., description="Base year"),
+    next_year: int = Query(..., description="Comparison year")
 ):
     return get_customer_retention(base_year, next_year)

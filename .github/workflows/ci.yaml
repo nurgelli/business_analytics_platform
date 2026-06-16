@@ -1,5 +1,4 @@
-# .github/workflows/ci.yml
-name: CI Pipeline
+name: CI pipe
 
 on:
   push:
@@ -37,6 +36,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
+          pip install flake8 pytest pytest-cov
 
       - name: Lint with flake8
         run: |
@@ -48,9 +48,15 @@ jobs:
           POSTGRES_DB: test_db
           POSTGRES_USER: admin
           POSTGRES_PASSWORD: testpass
+          POSTGRES_PORT: 5432
         run: |
-          pytest tests/ -v --tb=short
+          pytest tests/ -v --tb=short --cov=app --cov-report=term-missing
 
-      - name: Build Docker image
+      - name: Build API Docker image
         run: |
-          docker build -t project-image .
+          docker build -f docker/Dockerfile.api -t project-api .
+
+      - name: Build Dashboard Docker image
+        run: |
+          docker build -f docker/Dockerfile.dash -t project-dash .
+

@@ -1,6 +1,3 @@
-DROP MATERIALIZED VIEW IF EXISTS mv_monthly_revenue CASCADE;
-
-CREATE MATERIALIZED VIEW mv_monthly_revenue AS
 SELECT
     d.year,
     d.quarter,
@@ -22,24 +19,13 @@ SELECT
     ,2) AS profit_margin_pct
 
 FROM fact_sales f
-
 INNER JOIN dim_date d
 ON f.order_date_sk = d.date_sk
-
 GROUP BY
-
     d.year,
     d.quarter,
     d.month,
     d.month_name
-
 ORDER BY
-
     d.year,
     d.month;
-
-
--- Required for:
--- REFRESH MATERIALIZED VIEW CONCURRENTLY
-
-CREATE UNIQUE INDEX idx_mv_monthly_revenue ON mv_monthly_revenue (year,month);

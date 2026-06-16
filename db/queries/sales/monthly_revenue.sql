@@ -1,5 +1,3 @@
--- Monthly Revenue Summary
-
 SELECT
     d.year,
     d.quarter,

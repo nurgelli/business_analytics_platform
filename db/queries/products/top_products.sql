@@ -5,7 +5,7 @@ SELECT
     p.product_id,
     p.product_name,
     p.category,
-    p.subcategory,
+    p.sub_category,
 
     COUNT(DISTINCT f.order_id) AS total_orders,
 
@@ -38,7 +38,7 @@ GROUP BY
     p.product_id,
     p.product_name,
     p.category,
-    p.subcategory
+    p.sub_category
 
 ORDER BY
 

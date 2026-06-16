@@ -1,8 +1,8 @@
 import pandas as pd
-import logging
 from pathlib import Path
+from app.core.logger import get_logger
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 class DataExtractor:
@@ -20,13 +20,28 @@ class DataExtractor:
             raise FileNotFoundError(f"{self.file_path} does not exist")
 
         try:
-            self.df = pd.read_csv(self.file_path)
-            logger.info(f"CSV loaded successfully: {len(self.df)} rows")
-            return self.df
+            for encoding in ("utf-8", "utf-8-sig", "cp1252", "latin1"):
+                try:
+                    self.df = pd.read_csv(self.file_path, encoding=encoding)
+                    logger.info(
+                        f"CSV loaded successfully with {encoding}: {len(self.df)} rows"
+                    )
+                    return self.df
+                except UnicodeDecodeError:
+                    logger.debug(f"CSV decode failed with {encoding}")
+                    continue
 
         except Exception as e:
             logger.exception("Failed to read CSV")
             raise e
+
+        raise UnicodeDecodeError(
+            "csv",
+            b"",
+            0,
+            1,
+            f"Unable to decode {self.file_path} with supported encodings",
+        )
 
     def validate_columns(self, required_columns: list) -> bool:
         """

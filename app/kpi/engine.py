@@ -1,7 +1,5 @@
 # app/kpi/engine.py
-from sqlalchemy import text
 from app.core.logger import get_logger
-from app.db.sql_loader import load_sql
 from app.db.query_executer import fetch_all, fetch_one
 
 logger = get_logger(__name__)
@@ -33,10 +31,14 @@ def get_yoy_growth() -> list:
    
 def get_customer_retention(base_year: int, next_year: int) -> dict:
 
-    rows = fetch_all("analytics/kpi/customer_retention.sql")
+    row = fetch_one(
+        "analytics/kpi/customer_retention.sql",
+        {"base_year": base_year, "next_year": next_year},
+    )
 
-    return [{"year":row["year"],
-            "revenue": round(float(row["revenue"] or 0), 2,),
-            "prev_revenue":(round(float(row["prev_revenue"]),2,) if row["prev_revenue"] is not None else None),
-            "yoy_growth_pct":(float(row["yoy_growth_pct"]) if row["yoy_growth_pct"] is not None else None ),} for row in rows]
+    return {
+        "base_customers": int(row["base_customers"] or 0),
+        "retained_customers": int(row["retained_customers"] or 0),
+        "retention_rate_pct": float(row["retention_rate_pct"] or 0),
+    }
   

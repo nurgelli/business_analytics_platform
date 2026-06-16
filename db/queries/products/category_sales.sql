@@ -4,7 +4,7 @@ SELECT
 
     p.category,
 
-    p.subcategory,
+    p.sub_category,
 
     COUNT(DISTINCT f.order_id) AS total_orders,
 
@@ -29,7 +29,7 @@ INNER JOIN dim_product AS p
 GROUP BY
 
     p.category,
-    p.subcategory
+    p.sub_category
 
 ORDER BY
 

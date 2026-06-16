@@ -23,7 +23,7 @@ def get_inventory():
 @router.get('/{product_id}')
 def get_product_details(product_id: str):
 
-    row = fetch_one("products/product_details.sql", product_id)
+    row = fetch_one("products/product_details.sql", {"product_id": product_id})
 
     if row is None:
         return {"message": "Product not found"}

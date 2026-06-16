@@ -26,11 +26,13 @@ services:
     env_file: .env
     environment:
       POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
     depends_on:
       postgres:
         condition: service_healthy
     volumes:
       - ./logs:/app/logs
+      - ./data:/app/data
 
   streamlit:
     build:
@@ -38,6 +40,8 @@ services:
       dockerfile: docker/Dockerfile.dash
     ports:
       - '8501:8501'
+    environment:
+      - API_HOST=fastapi
     depends_on:
       - fastapi
 
