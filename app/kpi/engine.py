@@ -1,4 +1,3 @@
-# app/kpi/engine.py
 from app.core.logger import get_logger
 from app.db.query_executer import fetch_all, fetch_one
 

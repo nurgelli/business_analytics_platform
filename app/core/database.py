@@ -1,4 +1,3 @@
-# app/core/database.py
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 from app.core.config import settings
@@ -20,8 +19,8 @@ def test_connection():
     try:
         with engine.connect() as conn:
             conn.execute(text("SELECT 1"))
-        logger.info("Database connection successful")
+        logger.info("Database connection success")
         return True
     except Exception as e:
-        logger.error(f"Database connection failed: {e}")
+        logger.error(f"Database connection failed {e}")
         return False

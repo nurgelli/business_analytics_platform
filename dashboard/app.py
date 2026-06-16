@@ -35,11 +35,7 @@ ENDPOINTS = {
 }
 
 
-st.set_page_config(
-    page_title="Business Analytics Platform",
-    page_icon="BA",
-    layout="wide",
-)
+st.set_page_config(page_title="Business Analytic Visualization", page_icon="BA", layout="wide",)
 
 
 @st.cache_data(ttl=60)
@@ -125,8 +121,8 @@ def top_records(df: pd.DataFrame, metric: str, limit: int) -> pd.DataFrame:
     return df.sort_values(metric, ascending=False).head(limit)
 
 
-st.title("Business Analytics Platform")
-st.caption(f"API: {API_BASE} | Last updated: {datetime.now():%Y-%m-%d %H:%M}")
+st.title("Business Analytic Visualization")
+st.caption(f"API: {API_BASE}, Last updated: {datetime.now():%Y-%m-%d %H:%M}")
 
 monthly_df = load_df("Monthly Revenue")
 daily_df = load_df("Daily Sales")

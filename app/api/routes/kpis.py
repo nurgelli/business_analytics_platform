@@ -1,4 +1,3 @@
-# app/api/routes/kpis.py
 from fastapi import APIRouter, Query
 from typing import Optional
 from app.kpi.engine import get_revenue_kpis, get_yoy_growth, get_customer_retention

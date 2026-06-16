@@ -1,7 +1,5 @@
 from pathlib import Path
-
 from sqlalchemy import text
-
 from app.core.database import engine, test_connection
 from app.core.logger import get_logger
 from app.etl.extractor import DataExtractor
@@ -54,7 +52,7 @@ def run(csv_path: str | Path = DEFAULT_CSV_PATH) -> None:
         "mv_customer_summary",
     ])
 
-    logger.info("[ETL] Pipeline completed successfully")
+    logger.info("ETL - Pipeline completed successfully")
 
 
 if __name__ == "__main__":

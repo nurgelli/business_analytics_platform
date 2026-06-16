@@ -1,20 +1,27 @@
-import os
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
-
 from app.api.main import app
 from app.core.config import settings
-from app.core.database import get_db
+from app.etl.run_pipeline import run as run_etl_pipeline
 
-# ── Test DB oturumu (fixture) ──────────────────────────────────────────────
+
 @pytest.fixture(scope="session")
 def test_engine():
-    """CI'da POSTGRES_PORT=5432, localda .env'deki 5432 kullanılır."""
     engine = create_engine(settings.database_url, pool_pre_ping=True)
     yield engine
     engine.dispose()
+
+
+@pytest.fixture(scope="session", autouse=True)
+def ensure_warehouse_data(test_engine):
+    with test_engine.connect() as conn:
+        fact_count = conn.execute(text("SELECT COUNT(*) FROM fact_sales")).scalar()
+
+    if fact_count == 0:
+        run_etl_pipeline()
+
 
 @pytest.fixture(scope="function")
 def db_session(test_engine):
@@ -24,7 +31,7 @@ def db_session(test_engine):
     session.rollback()
     session.close()
 
-# ── FastAPI test client ────────────────────────────────────────────────────
+
 @pytest.fixture(scope="module")
 def client():
     with TestClient(app) as c:

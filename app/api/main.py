@@ -1,4 +1,3 @@
-# app/api/main.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.routes import kpis, sales, customers, products, analytics
@@ -10,13 +9,12 @@ logger = get_logger(__name__)
 
 app = FastAPI(
     title="Business Analytics API",
-    description="Sales Data Warehouse KPI and Analytics API",
-    version="1.0.0"
+    description="Sales Data warehouse KPI and Analytics API"
 )
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.allowed_origins,  # config'den gelir — .env ile override et
+    allow_origins=settings.allowed_origins, 
     allow_credentials=True,
     allow_methods=["GET", "POST"],
     allow_headers=["*"]

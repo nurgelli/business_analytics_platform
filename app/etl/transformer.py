@@ -5,23 +5,12 @@ logger = get_logger(__name__)
 
 
 class Transformer:
-    """
-    ETL transformation layer:
-    - data cleaning
-    - dimension building
-    - fact table construction
-    """
-
+ 
     def __init__(self, df: pd.DataFrame):
         self.df = df.copy()
 
-    # -----------------------------
-    # CORE CLEANING
-    # -----------------------------
     def clean(self) -> "Transformer":
-        """Normalize schema + handle missing values + type casting"""
-
-        # normalize column names
+        
         self.df.columns = (
             self.df.columns
             .str.strip()
@@ -30,12 +19,10 @@ class Transformer:
             .str.replace("-", "_")
         )
 
-        # datetime conversion
         for col in ["order_date", "ship_date"]:
             if col in self.df.columns:
                 self.df[col] = pd.to_datetime(self.df[col], errors="coerce")
 
-        # missing handling
         if "postal_code" in self.df.columns:
             self.df["postal_code"] = (
                 self.df["postal_code"]
@@ -43,7 +30,6 @@ class Transformer:
                 .astype(str)
             )
 
-        # critical keys validation
         self.df = self.df.dropna(subset=[
             "order_id",
             "customer_id",
@@ -53,26 +39,17 @@ class Transformer:
         logger.info(f"[Transformer] Cleaned rows: {len(self.df)}")
         return self
 
-    # -----------------------------
-    # DATE UTIL
-    # -----------------------------
+
     @staticmethod
     def create_date_key(date: pd.Timestamp) -> int:
         if pd.isna(date):
             return None
         return int(date.strftime("%Y%m%d"))
 
-    # -----------------------------
-    # DIMENSIONS
-    # -----------------------------
+  
     def build_dim_customer(self) -> pd.DataFrame:
         return (
-            self.df[[
-                "customer_id", "customer_name", "segment",
-                "city", "state", "country", "region", "postal_code"
-            ]]
-            .drop_duplicates(subset=["customer_id"])
-            .reset_index(drop=True)
+            self.df[["customer_id", "customer_name", "segment","city", "state", "country", "region", "postal_code"]].drop_duplicates(subset=["customer_id"]).reset_index(drop=True)
         )
 
     def build_dim_product(self) -> pd.DataFrame:
@@ -114,14 +91,7 @@ class Transformer:
 
         return dim_date
 
-    # -----------------------------
-    # FACT TABLE
-    # -----------------------------
-    def build_fact_sales(
-        self,
-        customer_map: dict,
-        product_map: dict
-    ) -> pd.DataFrame:
+    def build_fact_sales(self, customer_map: dict, product_map: dict) -> pd.DataFrame:
 
         fact = self.df.copy()
 
@@ -144,21 +114,18 @@ class Transformer:
             "profit"
         ]].rename(columns={"sales": "sales_amount"})
 
-        logger.info(f"[Transformer] Fact rows: {len(fact)}")
+        logger.info(f"Transformer Fact rows: {len(fact)}")
         return fact
 
     # -----------------------------
     # PIPELINE WRAPPER (OPTIONAL)
     # -----------------------------
     def run(self) -> pd.DataFrame:
-        """If you want simple execution chain"""
         return self.clean().df
 
 
 def transform(df: pd.DataFrame) -> dict[str, pd.DataFrame]:
-    """
-    Build all warehouse-ready dataframes from a raw Superstore dataframe.
-    """
+  
     transformer = Transformer(df).clean()
 
     return {
