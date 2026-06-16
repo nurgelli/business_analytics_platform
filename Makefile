@@ -27,7 +27,7 @@ etl:
 	$(PYTHON) -m app.etl.run_pipeline
 
 etl-docker:
-	docker compose run --rm fastapi python -m app.etl.run_pipeline
+	docker compose run --rm --build fastapi python -m app.etl.run_pipeline
 
 test:
 	$(PYTHON) -m pytest tests/ -v --tb=short
