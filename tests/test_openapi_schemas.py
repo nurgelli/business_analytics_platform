@@ -1,5 +1,6 @@
 from app.api.main import app
 
+
 def test_openapi_contains_response_models():
     schema = app.openapi()
     schemas = schema["components"]["schemas"]

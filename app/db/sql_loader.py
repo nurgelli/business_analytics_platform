@@ -3,7 +3,7 @@ from pathlib import Path
 
 
 class SQLLoader:
-    _BASE_DIR = (Path(__file__).resolve().parents[2]/ "db"/ "queries")
+    _BASE_DIR = Path(__file__).resolve().parents[2] / "db" / "queries"
 
     @classmethod
     @lru_cache(maxsize=128)
@@ -13,6 +13,7 @@ class SQLLoader:
             raise FileNotFoundError(f"SQL file not found: {sql_file}")
         return sql_file.read_text(encoding="utf-8").strip()
 
+
 def load_sql(relative_path: str) -> str:
-    
+
     return SQLLoader.load(relative_path)

@@ -3,6 +3,7 @@
 import pandas as pd
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
+
 from app.core.logger import get_logger
 
 logger = get_logger(__name__)
@@ -12,12 +13,7 @@ class PostgresLoader:
     def __init__(self, engine: Engine):
         self.engine = engine
 
-    def load_dimension(
-        self,
-        df: pd.DataFrame,
-        table: str,
-        conflict_col: str
-    ) -> None:
+    def load_dimension(self, df: pd.DataFrame, table: str, conflict_col: str) -> None:
 
         if df.empty:
             logger.warning(f"{table} Empty dataframe, skipping load.")
@@ -31,7 +27,9 @@ class PostgresLoader:
 
             cols = ", ".join(df.columns)
 
-            update_cols = ", ".join(f"{col} = EXCLUDED.{col}" for col in df.columns if col != conflict_col)
+            update_cols = ", ".join(
+                f"{col} = EXCLUDED.{col}" for col in df.columns if col != conflict_col
+            )
 
             query = text(f"""
                 INSERT INTO {table} ({cols})
@@ -58,7 +56,7 @@ class PostgresLoader:
         logger.info(f"FACT Loaded {len(df)} rows into {table}")
 
     def truncate_table(self, table: str) -> None:
-        
+
         with self.engine.begin() as conn:
             conn.execute(text(f"TRUNCATE TABLE {table} RESTART IDENTITY"))
 
@@ -70,12 +68,13 @@ class PostgresLoader:
             logger.warning("No materialized views provided")
             return
 
-        with self.engine.connect().execution_options(isolation_level="AUTOCOMMIT") as conn:
+        with self.engine.connect().execution_options(
+            isolation_level="AUTOCOMMIT"
+        ) as conn:
             for view in views:
                 conn.execute(text(f"REFRESH MATERIALIZED VIEW CONCURRENTLY {view}"))
 
         logger.info(f"Refreshed {len(views)} materialized views")
-
 
     def bulk_load(self, operations: list[dict]) -> None:
 
@@ -83,7 +82,9 @@ class PostgresLoader:
             op_type = op.get("type")
 
             if op_type == "dim":
-                self.load_dimension(df=op["df"], table=op["table"], conflict_col=op["conflict"])
+                self.load_dimension(
+                    df=op["df"], table=op["table"], conflict_col=op["conflict"]
+                )
 
             elif op_type == "fact":
                 self.load_fact(df=op["df"], table=op.get("table", "fact_sales"))

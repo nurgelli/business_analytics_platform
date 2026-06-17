@@ -1,5 +1,7 @@
 from pathlib import Path
+
 from sqlalchemy import text
+
 from app.core.database import engine, test_connection
 from app.core.logger import get_logger
 from app.etl.extractor import DataExtractor
@@ -27,7 +29,9 @@ def run(csv_path: str | Path = DEFAULT_CSV_PATH) -> None:
     logger.info(f"[ETL] Reading CSV from {csv_path}")
 
     if not test_connection():
-        raise RuntimeError("Database connection failed. Check POSTGRES_HOST and POSTGRES_PORT.")
+        raise RuntimeError(
+            "Database connection failed. Check POSTGRES_HOST and POSTGRES_PORT."
+        )
 
     raw_df = DataExtractor(str(csv_path)).extract_csv()
     transformer = Transformer(raw_df).clean()
@@ -47,10 +51,12 @@ def run(csv_path: str | Path = DEFAULT_CSV_PATH) -> None:
     loader.truncate_table("fact_sales")
     loader.load_fact(fact_sales)
 
-    loader.refresh_materialized_views([
-        "mv_monthly_revenue",
-        "mv_customer_summary",
-    ])
+    loader.refresh_materialized_views(
+        [
+            "mv_monthly_revenue",
+            "mv_customer_summary",
+        ]
+    )
 
     logger.info("ETL - Pipeline completed successfully")
 

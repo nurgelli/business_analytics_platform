@@ -1,5 +1,3 @@
-import pytest
-
 class TestSystemEndpoints:
     def test_root_returns_200(self, client):
         response = client.get("/")
@@ -13,6 +11,7 @@ class TestSystemEndpoints:
         assert "status" in body
         assert "database" in body
         assert body["status"] in ("healthy", "degraded")
+
 
 class TestSalesEndpoints:
     def test_monthly_revenue_returns_list(self, client):
@@ -28,11 +27,13 @@ class TestSalesEndpoints:
         response = client.get("/sales/revenue_by_region")
         assert response.status_code == 200
 
+
 class TestCustomerEndpoints:
     def test_customers_returns_list(self, client):
         response = client.get("/customers/")
         assert response.status_code == 200
         assert isinstance(response.json(), list)
+
 
 class TestAnalyticsEndpoints:
     def test_monthly_rank_returns_list(self, client):
@@ -46,6 +47,7 @@ class TestAnalyticsEndpoints:
     def test_customer_summary_mv(self, client):
         response = client.get("/analytics/materialized/customer_summary")
         assert response.status_code == 200
+
 
 class TestKpiEndpoints:
     def test_revenue_kpis(self, client):
@@ -64,4 +66,4 @@ class TestKpiEndpoints:
 
     def test_customer_retention_missing_params(self, client):
         response = client.get("/kpis/retention")
-        assert response.status_code == 422   # Unprocessable Entity — parametre eksik
+        assert response.status_code == 422  # Unprocessable Entity — parametre eksik

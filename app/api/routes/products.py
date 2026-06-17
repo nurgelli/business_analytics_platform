@@ -1,8 +1,10 @@
 from fastapi import APIRouter, HTTPException
-from app.db.query_executer import execute_query, fetch_one
+
 from app.api.schemas import CategorySales, InventorySummary, ProductDetail, TopProduct
+from app.db.query_executer import execute_query, fetch_one
 
 router = APIRouter()
+
 
 @router.get("/top_products", response_model=list[TopProduct])
 def get_top_products():
@@ -30,6 +32,3 @@ def get_product_details(product_id: str):
         raise HTTPException(status_code=404, detail="Product not found")
 
     return row
-
-
-

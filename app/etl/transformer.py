@@ -1,19 +1,18 @@
 import pandas as pd
+
 from app.core.logger import get_logger
 
 logger = get_logger(__name__)
 
 
 class Transformer:
- 
     def __init__(self, df: pd.DataFrame):
         self.df = df.copy()
 
     def clean(self) -> "Transformer":
-        
+
         self.df.columns = (
-            self.df.columns
-            .str.strip()
+            self.df.columns.str.strip()
             .str.lower()
             .str.replace(" ", "_")
             .str.replace("-", "_")
@@ -25,20 +24,13 @@ class Transformer:
 
         if "postal_code" in self.df.columns:
             self.df["postal_code"] = (
-                self.df["postal_code"]
-                .fillna("UNKNOWN")
-                .astype(str)
+                self.df["postal_code"].fillna("UNKNOWN").astype(str)
             )
 
-        self.df = self.df.dropna(subset=[
-            "order_id",
-            "customer_id",
-            "product_id"
-        ])
+        self.df = self.df.dropna(subset=["order_id", "customer_id", "product_id"])
 
         logger.info(f"[Transformer] Cleaned rows: {len(self.df)}")
         return self
-
 
     @staticmethod
     def create_date_key(date: pd.Timestamp) -> int:
@@ -46,45 +38,57 @@ class Transformer:
             return None
         return int(date.strftime("%Y%m%d"))
 
-  
     def build_dim_customer(self) -> pd.DataFrame:
         return (
-            self.df[["customer_id", "customer_name", "segment","city", "state", "country", "region", "postal_code"]].drop_duplicates(subset=["customer_id"]).reset_index(drop=True)
+            self.df[
+                [
+                    "customer_id",
+                    "customer_name",
+                    "segment",
+                    "city",
+                    "state",
+                    "country",
+                    "region",
+                    "postal_code",
+                ]
+            ]
+            .drop_duplicates(subset=["customer_id"])
+            .reset_index(drop=True)
         )
 
     def build_dim_product(self) -> pd.DataFrame:
         return (
-            self.df[[
-                "product_id", "product_name", "category", "sub_category"
-            ]]
+            self.df[["product_id", "product_name", "category", "sub_category"]]
             .drop_duplicates(subset=["product_id"])
             .reset_index(drop=True)
         )
 
     def build_dim_date(self) -> pd.DataFrame:
-        dates = pd.concat([
-            self.df.get("order_date"),
-            self.df.get("ship_date")
-        ]).dropna().unique()
+        dates = (
+            pd.concat([self.df.get("order_date"), self.df.get("ship_date")])
+            .dropna()
+            .unique()
+        )
 
         date_series = pd.Series(pd.to_datetime(dates))
 
-        dim_date = pd.DataFrame({
-            "date_sk": date_series.dt.strftime("%Y%m%d").astype(int),
-            "full_date": date_series,
-            "year": date_series.dt.year,
-            "quarter": date_series.dt.quarter,
-            "month": date_series.dt.month,
-            "month_name": date_series.dt.strftime("%B"),
-            "week": date_series.dt.isocalendar().week.astype(int),
-            "day_of_week": date_series.dt.dayofweek,
-            "day_name": date_series.dt.strftime("%A"),
-            "is_weekend": date_series.dt.dayofweek >= 5
-        })
+        dim_date = pd.DataFrame(
+            {
+                "date_sk": date_series.dt.strftime("%Y%m%d").astype(int),
+                "full_date": date_series,
+                "year": date_series.dt.year,
+                "quarter": date_series.dt.quarter,
+                "month": date_series.dt.month,
+                "month_name": date_series.dt.strftime("%B"),
+                "week": date_series.dt.isocalendar().week.astype(int),
+                "day_of_week": date_series.dt.dayofweek,
+                "day_name": date_series.dt.strftime("%A"),
+                "is_weekend": date_series.dt.dayofweek >= 5,
+            }
+        )
 
         dim_date = (
-            dim_date
-            .drop_duplicates(subset=["date_sk"])
+            dim_date.drop_duplicates(subset=["date_sk"])
             .sort_values("date_sk")
             .reset_index(drop=True)
         )
@@ -101,18 +105,20 @@ class Transformer:
         fact["customer_sk"] = fact["customer_id"].map(customer_map)
         fact["product_sk"] = fact["product_id"].map(product_map)
 
-        fact = fact[[
-            "order_id",
-            "order_date_sk",
-            "ship_date_sk",
-            "customer_sk",
-            "product_sk",
-            "ship_mode",
-            "quantity",
-            "sales",
-            "discount",
-            "profit"
-        ]].rename(columns={"sales": "sales_amount"})
+        fact = fact[
+            [
+                "order_id",
+                "order_date_sk",
+                "ship_date_sk",
+                "customer_sk",
+                "product_sk",
+                "ship_mode",
+                "quantity",
+                "sales",
+                "discount",
+                "profit",
+            ]
+        ].rename(columns={"sales": "sales_amount"})
 
         logger.info(f"Transformer Fact rows: {len(fact)}")
         return fact
@@ -125,7 +131,7 @@ class Transformer:
 
 
 def transform(df: pd.DataFrame) -> dict[str, pd.DataFrame]:
-  
+
     transformer = Transformer(df).clean()
 
     return {

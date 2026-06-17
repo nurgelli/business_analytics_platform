@@ -1,4 +1,5 @@
 from typing import Any
+
 import pytest
 
 
@@ -34,7 +35,13 @@ def first_row(client, path: str) -> dict[str, Any]:
         ),
         (
             "/sales/daily_sales",
-            {"full_date", "total_orders", "total_quantity", "total_revenue", "total_profit"},
+            {
+                "full_date",
+                "total_orders",
+                "total_quantity",
+                "total_revenue",
+                "total_profit",
+            },
         ),
         (
             "/sales/revenue_by_region",
@@ -64,7 +71,14 @@ def first_row(client, path: str) -> dict[str, Any]:
         ),
         (
             "/products/category_sales",
-            {"category", "sub_category", "total_orders", "total_quantity", "total_revenue", "total_profit"},
+            {
+                "category",
+                "sub_category",
+                "total_orders",
+                "total_quantity",
+                "total_revenue",
+                "total_profit",
+            },
         ),
         (
             "/products/inventory",
@@ -194,7 +208,13 @@ def test_revenue_kpi_contract(client):
 
     assert_fields(
         body,
-        {"total_revenue", "total_profit", "total_orders", "unique_customers", "profit_margin_pct"},
+        {
+            "total_revenue",
+            "total_profit",
+            "total_orders",
+            "unique_customers",
+            "profit_margin_pct",
+        },
     )
     assert body["total_revenue"] > 0
     assert body["total_orders"] > 0
@@ -219,7 +239,9 @@ def test_growth_contract_and_ordering(client):
 
 
 def test_retention_contract(client):
-    response = client.get("/kpis/retention", params={"base_year": 2016, "next_year": 2017})
+    response = client.get(
+        "/kpis/retention", params={"base_year": 2016, "next_year": 2017}
+    )
     assert response.status_code == 200
     body = response.json()
 
