@@ -5,7 +5,7 @@ __pycache__/
 env
 *.joblib
 *.pkl
-data/raw/
+# data/raw/
 data/processed/
 logs/
 .DS_Store

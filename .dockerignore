@@ -6,7 +6,7 @@ __pycache__
 *.pyo
 .env
 venv
-data/raw
+# data/raw
 data/processed
 logs
 notebooks/.ipynb_checkpoints
