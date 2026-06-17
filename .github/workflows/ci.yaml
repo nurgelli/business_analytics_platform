@@ -35,14 +35,13 @@ jobs:
           cache: 'pip'
           cache-dependency-path: requirements.txt
 
-
-      - name: Cache flake8, pytest araçları  # ← dev tool'ları ayrı cache'lenir
+      - name: Cache flake8, pytest araçları # ← dev tool'ları ayrı cache'lenir
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-dev-tools-flake8-pytest-pytestcov
           restore-keys: |
-            ${{ runner.os }}-dev-tools-    
+            ${{ runner.os }}-dev-tools-
 
       - name: Install dependencies
         run: |
@@ -52,6 +51,16 @@ jobs:
       - name: Lint with flake8
         run: |
           flake8 app/ tests/ --max-line-length=100
+
+      - name: Run ETL
+        env:
+          POSTGRES_HOST: localhost
+          POSTGRES_DB: test_db
+          POSTGRES_USER: admin
+          POSTGRES_PASSWORD: testpass
+          POSTGRES_PORT: 5432
+        run: |
+          python -m app.etl.run_pipeline
 
       - name: Run tests
         env:
@@ -70,4 +79,3 @@ jobs:
       - name: Build Dashboard Docker image
         run: |
           docker build -f docker/Dockerfile.dash -t project-dash .
-
