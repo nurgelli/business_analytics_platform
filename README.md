@@ -99,7 +99,7 @@ For local Python commands that connect to PostgreSQL through the host port, use:
 ```env
 POSTGRES_DB=analytics
 POSTGRES_USER=admin
-POSTGRES_PASSWORD=elantra12
+POSTGRES_PASSWORD=123456789
 POSTGRES_HOST=localhost
 POSTGRES_PORT=5432
 ```
